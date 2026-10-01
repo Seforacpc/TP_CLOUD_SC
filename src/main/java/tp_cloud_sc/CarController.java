@@ -34,4 +34,19 @@ public class CarController {
                 .findFirst()
                 .orElseThrow(() -> new Exception("Car not found"));
     }
+@PutMapping("/cars/{plateNumber}")
+public Car rentOrGetBack(
+        @PathVariable String plateNumber,
+        @RequestParam boolean rent,
+        @RequestBody(required = false) Dates dates) throws Exception {
+
+    Car car = cars.stream()
+            .filter(c -> c.getPlateNumber().equalsIgnoreCase(plateNumber))
+            .findFirst()
+            .orElseThrow(() -> new Exception("Car not found"));
+
+    car.setRented(rent);
+
+    return car;
+    }
 }
