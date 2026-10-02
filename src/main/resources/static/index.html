@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CloudCar | Car Rental</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        nav {
+            background: #0f172a;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .api-status {
+            background: #14532d;
+            color: #dcfce7;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .hero {
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #075985
+            );
+
+            color: white;
+            padding: 55px 7%;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: #dbeafe;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        main {
+            width: 86%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .stat {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .stat .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #0284c7;
+        }
+
+        .stat p {
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            padding: 11px 16px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0369a1;
+        }
+
+        .btn-dark {
+            background: #0f172a;
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: #1e293b;
+        }
+
+        .btn-reset {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-reset:hover {
+            background: #cbd5e1;
+        }
+
+        .cars {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .car-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .car-top {
+            height: 110px;
+            background: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .car-content {
+            padding: 20px;
+        }
+
+        .plate {
+            display: inline-block;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            padding: 5px 9px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .brand {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .available {
+            color: #15803d;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .price {
+            margin: 18px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .price span {
+            font-size: 13px;
+            font-weight: normal;
+            color: #64748b;
+        }
+
+        .car-card button {
+            width: 100%;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 24px;
+            margin-top: 35px;
+        }
+
+        .panel h2 {
+            margin-bottom: 8px;
+        }
+
+        .panel-description {
+            color: #64748b;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .return-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .message {
+            display: none;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .architecture {
+            margin-top: 35px;
+            background: #0f172a;
+            color: white;
+            padding: 25px;
+            border-radius: 14px;
+        }
+
+        .architecture h2 {
+            margin-bottom: 20px;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .tech {
+            background: #1e293b;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .tech strong {
+            display: block;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 35px;
+        }
+
+        @media (max-width: 700px) {
+
+            .stats,
+            .architecture-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-buttons {
+                flex-direction: column;
+            }
+
+            .return-form {
+                flex-direction: column;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            nav {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        ☁ Cloud<span>Car</span>
+    </div>
+
+    <div class="api-status">
+        ● API Spring Boot active
+    </div>
+
+</nav>
+
+
+<section class="hero">
+
+    <h1>Car Rental Cloud</h1>
+
+    <p>
+        Mini application de gestion de location de voitures
+        basée sur une architecture REST avec Java 21,
+        Spring Boot, Gradle et une interface Web.
+    </p>
+
+</section>
+
+
+<main>
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <!-- STATISTIQUES -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <div
+                id="availableCount"
+                class="number">
+                0
+            </div>
+
+            <p>
+                Voitures disponibles
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="number">
+                REST
+            </div>
+
+            <p>
+                Architecture API
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="number">
+                8080
+            </div>
+
+            <p>
+                Port Spring Boot
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- VOITURES -->
+
+    <section>
+
+        <div class="toolbar">
+
+            <h2>
+                🚗 Voitures disponibles
+            </h2>
+
+            <div class="toolbar-buttons">
+
+                <button
+                    class="btn-primary"
+                    onclick="loadCars()">
+
+                    ↻ Actualiser
+
+                </button>
+
+
+                <button
+                    class="btn-reset"
+                    onclick="resetCars()">
+
+                    ↺ Réinitialiser la démo
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="cars"
+            class="cars">
+
+            Chargement des voitures...
+
+        </div>
+
+    </section>
+
+
+    <!-- RETOUR -->
+
+    <section class="panel">
+
+        <h2>
+            ↩ Retour d'une voiture
+        </h2>
+
+        <p class="panel-description">
+
+            Entrez le numéro de plaque d'une voiture louée
+            pour la remettre dans la liste des véhicules
+            disponibles.
+
+        </p>
+
+
+        <div class="return-form">
+
+            <input
+                id="returnPlate"
+                type="text"
+                placeholder="Exemple : AA11BB">
+
+
+            <button
+                class="btn-dark"
+                onclick="returnCar()">
+
+                Rendre la voiture
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ARCHITECTURE -->
+
+    <section class="architecture">
+
+        <h2>
+            ☁ Architecture du projet
+        </h2>
+
+
+        <div class="architecture-grid">
+
+            <div class="tech">
+
+                <strong>
+                    Frontend
+                </strong>
+
+                HTML • CSS • JavaScript
+
+            </div>
+
+
+            <div class="tech">
+
+                <strong>
+                    Backend
+                </strong>
+
+                Java 21 • Spring Boot
+
+            </div>
+
+
+            <div class="tech">
+
+                <strong>
+                    API REST
+                </strong>
+
+                GET • PUT • JSON
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    TP Cloud — Car Rental REST API
+
+</footer>
+
+
+<script>
+
+    /*
+     * Affichage des messages
+     */
+    function showMessage(text, error = false) {
+
+        const message =
+            document.getElementById("message");
+
+        message.textContent = text;
+
+        message.className =
+            error
+                ? "message error"
+                : "message success";
+
+
+        setTimeout(() => {
+
+            message.className = "message";
+
+        }, 4000);
+    }
+
+
+    /*
+     * GET /cars
+     *
+     * Récupère les voitures disponibles
+     * depuis l'API Spring Boot.
+     */
+    async function loadCars() {
+
+        const container =
+            document.getElementById("cars");
+
+        try {
+
+            const response =
+                await fetch("/cars");
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Erreur API"
+                );
+            }
+
+
+            const cars =
+                await response.json();
+
+
+            document
+                .getElementById("availableCount")
+                .textContent = cars.length;
+
+
+            container.innerHTML = "";
+
+
+            if (cars.length === 0) {
+
+                container.innerHTML =
+                    "<p>Aucune voiture disponible.</p>";
+
+                return;
+            }
+
+
+            cars.forEach(car => {
+
+                const card =
+                    document.createElement("article");
+
+
+                card.className =
+                    "car-card";
+
+
+                card.innerHTML = `
+
+                    <div class="car-top">
+                        🚗
+                    </div>
+
+                    <div class="car-content">
+
+                        <span class="plate">
+                            ${car.plateNumber}
+                        </span>
+
+                        <h3 class="brand">
+                            ${car.brand}
+                        </h3>
+
+                        <div class="available">
+                            ● Disponible
+                        </div>
+
+                        <div class="price">
+
+                            ${car.price} €
+
+                            <span>
+                                / jour
+                            </span>
+
+                        </div>
+
+                        <button
+                            class="btn-primary"
+                            onclick="
+                                rentCar(
+                                    '${car.plateNumber}'
+                                )
+                            ">
+
+                            Louer cette voiture
+
+                        </button>
+
+                    </div>
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+
+        } catch (error) {
+
+            container.innerHTML =
+                "<p>Impossible de contacter l'API REST.</p>";
+
+
+            document
+                .getElementById("availableCount")
+                .textContent = "!";
+
+        }
+    }
+
+
+    /*
+     * PUT /cars/{plate}?rent=true
+     *
+     * Loue une voiture.
+     */
+    async function rentCar(plateNumber) {
+
+        try {
+
+            const response =
+                await fetch(
+
+                    `/cars/${plateNumber}?rent=true`,
+
+                    {
+
+                        method: "PUT",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            begin:
+                                "11/11/2017",
+
+                            end:
+                                "1/1/2018"
+
+                        })
+
+                    }
+
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Location impossible"
+                );
+            }
+
+
+            showMessage(
+
+                "✓ La voiture "
+                + plateNumber
+                + " a été louée avec succès."
+
+            );
+
+
+            await loadCars();
+
+
+        } catch (error) {
+
+            showMessage(
+
+                "Impossible de louer cette voiture.",
+
+                true
+
+            );
+
+        }
+    }
+
+
+    /*
+     * PUT /cars/{plate}?rent=false
+     *
+     * Retour d'une voiture.
+     */
+    async function returnCar() {
+
+        const input =
+            document.getElementById(
+                "returnPlate"
+            );
+
+
+        const plateNumber =
+            input.value
+                .trim()
+                .toUpperCase();
+
+
+        if (plateNumber === "") {
+
+            showMessage(
+
+                "Veuillez entrer un numéro de plaque.",
+
+                true
+
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    `/cars/${plateNumber}?rent=false`,
+
+                    {
+                        method: "PUT"
+                    }
+
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Retour impossible"
+                );
+            }
+
+
+            showMessage(
+
+                "✓ La voiture "
+                + plateNumber
+                + " a été rendue avec succès."
+
+            );
+
+
+            input.value = "";
+
+
+            await loadCars();
+
+
+        } catch (error) {
+
+            showMessage(
+
+                "Voiture introuvable : "
+                + plateNumber,
+
+                true
+
+            );
+
+        }
+    }
+
+
+    /*
+     * PUT /cars/reset
+     *
+     * Bonus pour remettre la démonstration
+     * dans son état initial.
+     */
+    async function resetCars() {
+
+        const confirmation =
+            confirm(
+                "Réinitialiser toutes les voitures ?"
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    "/cars/reset",
+
+                    {
+                        method: "PUT"
+                    }
+
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Reset impossible"
+                );
+            }
+
+
+            showMessage(
+
+                "✓ Démo réinitialisée : "
+                + "toutes les voitures sont disponibles."
+
+            );
+
+
+            document
+                .getElementById("returnPlate")
+                .value = "";
+
+
+            await loadCars();
+
+
+        } catch (error) {
+
+            showMessage(
+
+                "Impossible de réinitialiser la démo.",
+
+                true
+
+            );
+
+        }
+    }
+
+
+    /*
+     * Chargement automatique
+     * au démarrage de la page.
+     */
+    loadCars();
+
+</script>
+
+</body>
+</html>

@@ -15,11 +15,6 @@ public class CarController {
         cars.add(new Car("EE33FF", "Mercedes", 90));
     }
 
-    @GetMapping("/")
-    public String hello() {
-        return "Car Rental REST API";
-    }
-
     @GetMapping("/cars")
     public List<Car> listOfCars() {
         return cars.stream()
@@ -49,4 +44,9 @@ public Car rentOrGetBack(
 
     return car;
     }
+@PutMapping("/cars/reset")
+public List<Car> resetCars() {
+    cars.forEach(car -> car.setRented(false));
+    return cars;
+}
 }
